@@ -1,0 +1,112 @@
+--Creación de base de datos 
+CREATE DATABASE ControlEdificios;
+GO
+
+--Tabla de empleados
+CREATE TABLE Empleados (
+	EmpleadoID INT PRIMARY KEY IDENTITY(1,1),
+	Nombre NVARCHAR(100) NOT NULL,
+	Rol NVARCHAR(50) NOT NULL,
+	ZonaAcceso NVARCHAR(100)
+);
+
+--Tabla de Usuarios
+CREATE TABLE Usuarios(
+	Usuario VARCHAR(50) NOT NULL,
+	Contraseña NVARCHAR(50) NOT NULL,
+	Rol NVARCHAR(50) NOT NULL
+);
+
+--Tabla de Visitantes
+CREATE TABLE Visitantes (
+	VisitanteID INT PRIMARY KEY IDENTITY (1,1),
+	Nombre NVARCHAR(100) NOT NULL,
+	Telefono NVARCHAR(50),
+	MotivoVisita NVARCHAR(200)
+);
+
+--Tabla de Zonas
+CREATE TABLE Zonas (
+	ZonasID INT PRIMARY KEY IDENTITY(1,1),
+	NombreZona NVARCHAR(50) NOT NULL,
+	AccesoRestringido BIT NOT NULL
+);
+
+--Tabla de Accesos
+CREATE TABLE Accesos (
+	AccesoID INT PRIMARY KEY IDENTITY(1,1),
+	EmpleadoID INT NULL, --Permite que sea null cuando sea un visitante 
+	VisitanteID INT NULL, --Permite que sea null cuando sea un empleado
+	ZonaID INT,
+	FechaHoraEntrada DATETIME NOT NULL,
+	FechaHoraSalida DATETIME,
+	FOREIGN KEY (EmpleadoID) REFERENCES Empleados(EmpleadoID),
+	FOREIGN KEY (ZonaID) REFERENCES Zonas(ZonasID),
+	FOREIGN KEY (VisitanteID) REFERENCES Visitantes(VisitanteID)
+);
+
+--Tabla alerta de seguridad
+
+CREATE TABLE AlertaSeguridad (
+	AlertaID INT PRIMARY KEY IDENTITY(1,1),
+	EmpleadoID INT NOT NULL,
+	FechaHora DATETIME,
+	TipoAlerta NVARCHAR(100),
+	Descripcion NVARCHAR(200),
+	FOREIGN KEY (EmpleadoID) REFERENCES Empleados(EmpleadoID)
+);
+
+
+PROCEDIMIENTOS
+
+--Registrar empleado
+CREATE PROCEDURE SP_RegistrarAccesoEmpleado
+	@EmpleadoID INT,
+	@ZonaID INT,
+	@FechaEntrada DATETIME
+AS
+BEGIN
+	INSERT INTO	ControlEdificios.dbo.Accesos (EmpleadoID, ZonaID, FechaHoraEntrada, VisitanteID)
+	VALUES (@EmpleadoID, @ZonaID, @FechaEntrada, NULL);
+END;
+
+--Registrar visitante
+
+CREATE PROCEDURE SP_RegistrarAccesoVisitante
+    @VisitanteID INT,
+    @ZonaID INT,
+    @FechaEntrada DATETIME
+AS
+BEGIN
+    INSERT INTO [ControlEdificios].[dbo].[Accesos] (VisitanteID, ZonaID, FechaHoraEntrada, EmpleadoID)
+    VALUES (@VisitanteID, @ZonaID, @FechaEntrada, NULL);
+END;
+
+
+--Registrar Alerta
+
+CREATE PROCEDURE SP_GenerarAlerta
+	@EmpleadoID INT,
+	@TipoAlerta NVARCHAR(100),
+	@Descripcion NVARCHAR(200)
+AS
+BEGIN
+	INSERT INTO [ControlEdificios].[dbo].[AlertaSeguridad] (EmpleadoID, FechaHora, TipoAlerta, Descripcion)
+	VALUES (@EmpleadoID, GETDATE(), @TipoAlerta, @Descripcion);
+END;
+
+--Validar login
+CREATE PROCEDURE SP_ValidarLogin
+	@Usuario NVARCHAR(50),
+	@Contraseña NVARCHAR(50)
+AS
+BEGIN
+	SELECT Usuario, Contraseña, Rol
+	FROM [ControlEdificios].[dbo].[Usuarios]
+	WHERE Usuario = @Usuario AND Contraseña = @Contraseña;
+END
+
+
+INSERT INTO Usuarios (Usuario,Contraseña,Rol)
+
+	VALUES ('banano','3000','Administrador')
