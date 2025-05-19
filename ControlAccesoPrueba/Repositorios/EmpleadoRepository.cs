@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ControlAccesoPrueba.Modelos;
 
 
 namespace ControlAccesoPrueba.Repositorios
@@ -15,14 +16,15 @@ namespace ControlAccesoPrueba.Repositorios
         //CRUD
 
         //Agregar Empleados
-        public void AgregarEmpleado(string nombre, string rol, string zonaAcceso)
+        public void AgregarEmpleado(int empleadoID,string nombre, RolEmpleado rol, string zonaAcceso)
         {
             var conexion = ConexionBD.ObtenerInstancia().ObtenerConexion();
 
-            using (SqlCommand cmd = new SqlCommand("INSERT INTO Empleados (Nombre, Rol, ZonaAcceso) VALUES (@Nombre, @Rol, @ZonaAcceso)", conexion))
+            using (SqlCommand cmd = new SqlCommand("INSERT INTO Empleados (EmpleadoID,Nombre, Rol, ZonaAcceso) VALUES (@EmpleadoID,@Nombre, @Rol, @ZonaAcceso)", conexion))
             {
+                cmd.Parameters.AddWithValue("@EmpleadoID", empleadoID);
                 cmd.Parameters.AddWithValue("@Nombre", nombre);
-                cmd.Parameters.AddWithValue("@Rol", rol);
+                cmd.Parameters.AddWithValue("@Rol", rol.ToString());
                 cmd.Parameters.AddWithValue("@ZonaAcceso", zonaAcceso);
                 cmd.ExecuteNonQuery();
             }
@@ -44,7 +46,7 @@ namespace ControlAccesoPrueba.Repositorios
                     {
                         EmpleadoID = reader.GetInt32(0),
                         Nombre = reader.GetString(1),
-                        Rol = reader.GetString(2),
+                        Rol = Enum.Parse<RolEmpleado>(reader.GetString(2)),
                         ZonaAcceso = reader.IsDBNull(3) ? null : reader.GetString(3)
                     });
                 }
@@ -55,15 +57,15 @@ namespace ControlAccesoPrueba.Repositorios
         }
 
         //Actualizar Empleados
-        public void ActualizarEmpleado(int id, string nombre, string rol, string zonaAcceso)
+        public void ActualizarEmpleado(int empleadoID, string nombre, RolEmpleado rol, string zonaAcceso)
         {
             var conexion = ConexionBD.ObtenerInstancia().ObtenerConexion();
 
-            using (SqlCommand cmd = new SqlCommand("UPDATE Empleados SET Nombre=@Nombre, Rol=@Rol, ZonaAcceso=@ZonaAcceso WHERE EmpleadoID=@ID ", conexion))
+            using (SqlCommand cmd = new SqlCommand("UPDATE Empleados SET Nombre=@Nombre, Rol=@Rol, ZonaAcceso=@ZonaAcceso WHERE EmpleadoID=@EmpleadoID ", conexion))
             {
-                cmd.Parameters.AddWithValue("@ID", id);
+                cmd.Parameters.AddWithValue("@EmpleadoID", empleadoID);
                 cmd.Parameters.AddWithValue("@Nombre", nombre);
-                cmd.Parameters.AddWithValue("@Rol", rol);
+                cmd.Parameters.AddWithValue("@Rol", rol.ToString());
                 cmd.Parameters.AddWithValue("@ZonaAcceso", zonaAcceso);
                 cmd.ExecuteNonQuery();
             }

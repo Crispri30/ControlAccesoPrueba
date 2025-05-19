@@ -7,11 +7,17 @@ using System.Threading.Tasks;
 
 namespace ControlAccesoPrueba.Modelos
 {
+    public enum RolEmpleado
+    {
+        Administrador,
+        Seguridad,
+        Empleado
+    }
     public class Empleados
     {
         public int EmpleadoID {  get; set; }
         public string Nombre { get; set; }
-        public string Rol { get; set; }
+        public RolEmpleado Rol { get; set; }
         public string ZonaAcceso   { get; set; }
 
     }
