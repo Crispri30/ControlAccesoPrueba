@@ -10,7 +10,6 @@ namespace ControlAccesoPrueba.Modelos
     {
         public int VisitanteID {  get; set; }
         public string Nombre { get; set; }
-
         public string Telefono { get; set; }
         public string MotivoVisita { get; set; }
 

@@ -14,12 +14,23 @@ namespace ControlAccesoPrueba.Repositorios
         {
             SqlConnection conexion = ConexionBD.ObtenerInstancia().ObtenerConexion();
 
-            using (SqlCommand cmd = new SqlCommand("INSERT INTO Visitantes (Nombre, Telefono, MotivoVisita) VALUES (@Nombre,@Telefono,@MotivoVisita)",conexion))
+            using (SqlCommand cmd = new SqlCommand("INSERT INTO Visitantes (VisitanteID,Nombre, Telefono, MotivoVisita) VALUES (@VisitanteID,@Nombre,@Telefono,@MotivoVisita)",conexion))
             {
+                cmd.Parameters.AddWithValue("@VisitanteID", visitanteID );
                 cmd.Parameters.AddWithValue("@Nombre", nombre);
                 cmd.Parameters.AddWithValue("@Telefono", telefono);
                 cmd.Parameters.AddWithValue("MotivoVisita", motivoVisita);
-                cmd.ExecuteNonQuery();
+
+                int filas_afectadas = cmd.ExecuteNonQuery();
+
+                if (filas_afectadas == 0)
+                {
+                    MessageBox.Show("Error al ingresar visitante");
+                }
+                else
+                {
+                    MessageBox.Show("Se agrego correctamente el visitante a la base de datos");
+                }
             }
             ConexionBD.ObtenerInstancia().CerrarConexion();
         }
@@ -52,14 +63,23 @@ namespace ControlAccesoPrueba.Repositorios
         public void ActualizarVisitantes(int visitanteID, string nombre, string telefono, string motivoVisita)
         {
             SqlConnection conexion = ConexionBD.ObtenerInstancia().ObtenerConexion();
-            using (SqlCommand cmd = new SqlCommand("UPDATE Visitantes SET Nombre=@Nombre, Telefono=@Telefono, MotivoVisita=@MotivoVista WHERE VisitanteID=@VisitanteID", conexion))
+            using (SqlCommand cmd = new SqlCommand("UPDATE Visitantes SET Nombre=@Nombre, Telefono=@Telefono, MotivoVisita=@MotivoVisita WHERE VisitanteID=@VisitanteID", conexion))
             {
                 cmd.Parameters.AddWithValue("@VistanteID", visitanteID);
                 cmd.Parameters.AddWithValue("@Nombre", nombre);
                 cmd.Parameters.AddWithValue("@Telefono", telefono);
                 cmd.Parameters.AddWithValue("@MotivoVisita", motivoVisita);
 
-                cmd.ExecuteNonQuery();
+                int filas_afectadas = cmd.ExecuteNonQuery();
+
+                if(filas_afectadas == 0)
+                {
+                    MessageBox.Show("El visitante no existe");
+                }
+                else
+                {
+                    MessageBox.Show("Se actualizo correctamente al visitante");
+                }
 
             }
             ConexionBD.ObtenerInstancia().CerrarConexion();
@@ -71,7 +91,17 @@ namespace ControlAccesoPrueba.Repositorios
             using (SqlCommand cmd =  new SqlCommand("DELETE FROM Visitantes WHERE VisitanteID=@VisitanteID", conexion))
             {
                 cmd.Parameters.AddWithValue("@VisitanteID", visitanteID);
-                cmd.ExecuteNonQuery();
+
+                int filas_afectadas = cmd.ExecuteNonQuery();
+
+                if (filas_afectadas == 0)
+                {
+                    MessageBox.Show("El visitante no existe");
+                }
+                else
+                {
+                    MessageBox.Show("Se elimino correctamente al visitante");
+                }
             }
             ConexionBD.ObtenerInstancia().ObtenerConexion();
         }

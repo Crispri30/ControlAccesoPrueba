@@ -67,20 +67,40 @@ namespace ControlAccesoPrueba.Repositorios
                 cmd.Parameters.AddWithValue("@Nombre", nombre);
                 cmd.Parameters.AddWithValue("@Rol", rol.ToString());
                 cmd.Parameters.AddWithValue("@ZonaAcceso", zonaAcceso);
-                cmd.ExecuteNonQuery();
+                
+                int filas_afectadas = cmd.ExecuteNonQuery();
+
+                if (filas_afectadas == 0)
+                {
+                    MessageBox.Show("El empleado no existe");
+                }
+                else
+                {
+                    MessageBox.Show("Empleado actualizado correctamente");
+                }
             }
             ConexionBD.ObtenerInstancia().CerrarConexion();
 
         }
 
         //Eliminar Empleado
-        public void EliminarEmpleado(int id)
+        public void EliminarEmpleado(int empleadoID)
         {
             var conexion = ConexionBD.ObtenerInstancia().ObtenerConexion();
             using (SqlCommand cmd = new SqlCommand("DELETE FROM Empleados WHERE EmpleadoID = @ID", conexion)) 
             {
-                cmd.Parameters.AddWithValue("@ID", id);
-                cmd.ExecuteNonQuery();
+                cmd.Parameters.AddWithValue("@ID", empleadoID);
+
+                int filas_afectadas = cmd.ExecuteNonQuery();
+
+                if (filas_afectadas == 0)
+                {
+                    MessageBox.Show("El empleado no existe");
+                }
+                else
+                {
+                    MessageBox.Show("Empleado eliminado correctamente");
+                }
             }
             ConexionBD.ObtenerInstancia().ObtenerConexion();
         }
